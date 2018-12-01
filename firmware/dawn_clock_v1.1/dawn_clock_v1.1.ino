@@ -86,7 +86,7 @@ volatile int tic, duty;
 void setup() {
   Serial.begin(9600);
   pinMode(DIM_PIN, OUTPUT);
-#if (TAWN_TYPE == 1)
+#if (DAWN_TYPE == 1)
   // повышаем частоту ШИМ на выходе, чтобы уменьшить мерцание светильника
   #if (DIM_PIN == 3 || (DIM_PIN >= 9 && DIM_PIN <= 11))
     TCCR2B = TCCR2B & B11111000 | B00000010; // порты 3, 9, 10, 11 до 4 кГц
