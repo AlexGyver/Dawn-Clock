@@ -57,12 +57,6 @@
 
 #define ENCODER_TYPE 1    // тип энкодера (0 или 1). Типы энкодеров расписаны на странице проекта
 
-#define MODE_DEFAULT 0    // обычный режим
-#define MODE_SET_ALARM 1  // установка будильника
-#define MODE_SET_TIME 2   // установка времени
-#define MODE_SET_DATE 3   // установка даты
-#define MODE_SET_YEAR 4   // установка года
-
 #define DAY_CONDITION 1   // 0 - срабатывать каждый день, 1 - по будням
 
 // ************ ПИНЫ ************
@@ -78,6 +72,13 @@
 
 #define BUZZ_PIN 7    // пищалка (по желанию)
 #define LED_PIN 6     // светодиод индикатор
+
+// ***************** РЕЖИМЫ  *****************
+#define MODE_DEFAULT 0    // обычный режим
+#define MODE_SET_ALARM 1  // установка будильника
+#define MODE_SET_TIME 2   // установка времени
+#define MODE_SET_DATE 3   // установка даты
+#define MODE_SET_YEAR 4   // установка года
 
 // ***************** ОБЪЕКТЫ И ПЕРЕМЕННЫЕ *****************
 # include "GyverTimer.h"
@@ -657,16 +658,13 @@ void encoderTick()
 
 void alarmTick()
 {
-  if (dawn_start && alarmFlag)
+  if (dawn_start && alarmFlag && dutyTimer.isReady())
   {
-    if (dutyTimer.isReady())
+    // поднимаем яркость по таймеру
+    duty++;
+    if (duty > DAWN_MAX)
     {
-      // поднимаем яркость по таймеру
-      duty++;
-      if (duty > DAWN_MAX)
-      {
-        duty = DAWN_MAX;
-      }
+      duty = DAWN_MAX;
     }
   }
 
@@ -693,6 +691,7 @@ void alarmTick()
         blinkTimer.setInterval(700);
         disp.point(1);
         disp.displayClock(hrs, mins);
+
         if (ALARM_BLINK)
         {
           duty = DAWN_MAX;     // мигаем светом
@@ -709,6 +708,7 @@ void alarmTick()
         blinkTimer.setInterval(300);
         disp.point(0);
         disp.clear();
+
         if (ALARM_BLINK)
         {
           duty = DAWN_MIN;
@@ -766,6 +766,9 @@ void clockTick()
 
       if (mins > 59)
       {
+        // некоторые переменные имеют имя совпадающее с ключевыми словами функции
+        // ардуино IDE подсвечивает их, как методы
+        // не обращайте на это внимание
         DateTime now = rtc.now();
         secs = now.second();
         mins = now.minute();
@@ -788,16 +791,18 @@ void clockTick()
       }
 
       // после пересчёта часов проверяем будильник!
-      if (dotFlag)
+      // если сегодня день срабатывания будильника
+      // и будильник установлен
+
+      if (dotFlag && isAlarmDay() && alarmFlag)
       {
-        if (isAlarmDay() && alarmFlag &&
-            dwn_hrs == hrs && dwn_mins == mins && !dawn_start)
+        if (dwn_hrs == hrs && dwn_mins == mins && !dawn_start)
         {
           duty = DAWN_MIN;
           dawn_start = true;
         }
-        if (isAlarmDay() && alarmFlag &&
-            alm_hrs == hrs && alm_mins == mins && dawn_start && !alarm)
+
+        if (alm_hrs == hrs && alm_mins == mins && dawn_start && !alarm)
         {
           alarm = true;
           alarmTimeout.reset();
