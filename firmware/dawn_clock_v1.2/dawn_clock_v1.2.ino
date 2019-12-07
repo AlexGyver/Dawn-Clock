@@ -25,16 +25,13 @@
    Клик в режиме установки года -> режим часов
 
    Удержание в режиме часов -> вкл/выкл будильник
-   Удержание в режиме установки будильника -> установка времени
-   Удержание в режиме установки времени -> установка даты
-   Удержание в режиме установки даты -> установка года
-   Клик/удержание в режиме установки года -> режим часов
+   Удержание в режиме любой установки -> режим часов
 
    Режим часов: двоеточие моргает раз в секунду
    Установка будильника: цифры вместе с двоеточием моргают
    Установка часов: двоеточие горит, цифры моргают
-   Установка даты: цифры горят, двоеточия нет (немного промигивает)
-   Установка года: цифры горят, первые цифры 20, двоеточия нет  (немного промигивает)
+   Установка даты: цифры горят, двоеточия нет
+   Установка года: цифры горят, первые цифры 20, двоеточия нет
 */
 
 // *************************** НАСТРОЙКИ ***************************
@@ -53,7 +50,7 @@
 #define MIN_BRIGHT 1      // яркость дисплея ночная (0 - 7)
 #define NIGHT_START 23    // час перехода на ночную подсветку (MIN_BRIGHT)
 #define NIGHT_END 7       // час перехода на дневную подсветку (MAX_BRIGHT)
-#define LED_BRIGHT 35     // яркость светодиода индикатора (0 - 255)
+#define LED_BRIGHT 20     // яркость светодиода индикатора (0 - 255)
 
 #define ENCODER_TYPE 1    // тип энкодера (0 или 1). Типы энкодеров расписаны на странице проекта
 
@@ -154,14 +151,7 @@ void setup()
   alarmFlag = constrain(alarmFlag, 0, 1);
 
   // установка яркости от времени суток
-  if ((hrs >= NIGHT_START && hrs <= 23) || (hrs >= 0 && hrs <= NIGHT_END))
-  {
-    disp.brightness(MIN_BRIGHT);
-  }
-  else
-  {
-    disp.brightness(MAX_BRIGHT);
-  }
+  checkDisplayBrightness();
 }
 
 void loop()
@@ -172,7 +162,7 @@ void loop()
   settings();     // настройки
   dutyTick();     // управление лампой
 
-  if (minuteFlag && mode == 0 && !alarm)    // если новая минута и стоит режим часов и не орёт будильник
+  if (minuteFlag && mode == MODE_DEFAULT && !alarm)    // если новая минута и стоит режим часов и не орёт будильник
   {
     minuteFlag = false;
     // выводим время
@@ -188,6 +178,18 @@ void loop()
     {
       disp.displayClockTwist(hrs, mins, 35);
     }
+  }
+}
+
+void checkDisplayBrightness()
+{
+  if ((hrs >= NIGHT_START && hrs <= 23) || (hrs >= 0 && hrs <= NIGHT_END))
+  {
+    disp.brightness(MIN_BRIGHT);
+  }
+  else
+  {
+    disp.brightness(MAX_BRIGHT);
   }
 }
 
@@ -213,13 +215,12 @@ void calculateDawn()
 
 void dutyTick()
 {
-  if (dawn_start || alarm)         // если рассвет или уже будильник
+#if (DAWN_TYPE == 1)      // если мосфет
+  if (dawn_start || alarm)      // если рассвет или уже будильник
   {
-    if (DAWN_TYPE)            // если мосфет
-    {
-      analogWrite(DIM_PIN, duty);   // жарим ШИМ
-    }
+    analogWrite(DIM_PIN, duty);   // жарим ШИМ
   }
+#endif // если DAWN_TYPE == 0 то код не скомпилируется и функция dutyTick будет пуста
 }
 
 #if (DAWN_TYPE == 0)  // если диммер
@@ -252,301 +253,304 @@ void detect_down() {      // обработка внешнего прерыва�
 
 void settings()
 {
-  // *********** РЕЖИМ УСТАНОВКИ БУДИЛЬНИКА **********
-  if (mode == MODE_SET_ALARM)
+  switch (mode)
   {
-    if (timeoutTimer.isReady())
-    {
-      mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
-    }
+    case MODE_SET_ALARM:
+      // *********** РЕЖИМ УСТАНОВКИ БУДИЛЬНИКА **********
 
-    if (enc.isRight())
-    {
-      alm_mins++;
-      if (alm_mins > 59)
+      if (timeoutTimer.isReady())
       {
-        alm_mins = 0;
+        mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
+      }
+
+      if (enc.isRight())
+      {
+        alm_mins++;
+        if (alm_mins > 59)
+        {
+          alm_mins = 0;
+          alm_hrs++;
+          if (alm_hrs > 23)
+          {
+            alm_hrs = 0;
+          }
+        }
+      }
+
+      if (enc.isLeft())
+      {
+        alm_mins--;
+        if (alm_mins < 0)
+        {
+          alm_mins = 59;
+          alm_hrs--;
+          if (alm_hrs < 0)
+          {
+            alm_hrs = 23;
+          }
+        }
+      }
+
+      if (enc.isRightH())
+      {
         alm_hrs++;
         if (alm_hrs > 23)
         {
           alm_hrs = 0;
         }
       }
-    }
 
-    if (enc.isLeft())
-    {
-      alm_mins--;
-      if (alm_mins < 0)
+      if (enc.isLeftH())
       {
-        alm_mins = 59;
         alm_hrs--;
         if (alm_hrs < 0)
         {
           alm_hrs = 23;
         }
       }
-    }
 
-    if (enc.isRightH())
-    {
-      alm_hrs++;
-      if (alm_hrs > 23)
+      if (enc.isTurn() && !blinkFlag)
       {
-        alm_hrs = 0;
-      }
-    }
-
-    if (enc.isLeftH())
-    {
-      alm_hrs--;
-      if (alm_hrs < 0)
-      {
-        alm_hrs = 23;
-      }
-    }
-
-    if (enc.isTurn() && !blinkFlag)
-    { // вывести свежие изменения при повороте
-      disp.displayClock(alm_hrs, alm_mins);
-      timeoutTimer.reset();               // сбросить таймаут
-    }
-
-    if (blinkTimer.isReady())
-    {
-      if (blinkFlag)
-      {
-        blinkFlag = false;
-        blinkTimer.setInterval(700);
-        disp.point(1);
+        // вывести свежие изменения при повороте
         disp.displayClock(alm_hrs, alm_mins);
+        timeoutTimer.reset();               // сбросить таймаут
       }
-      else
+
+      if (blinkTimer.isReady())
       {
-        blinkFlag = true;
-        blinkTimer.setInterval(300);
-        disp.point(0);
-        disp.clear();
+        if (blinkFlag)
+        {
+          blinkFlag = false;
+          blinkTimer.setInterval(700);
+          disp.point(1);
+          disp.displayClock(alm_hrs, alm_mins);
+        }
+        else
+        {
+          blinkFlag = true;
+          blinkTimer.setInterval(300);
+          disp.point(0);
+          disp.clear();
+        }
       }
-    }
-  }
+      break;
 
-  // *********** РЕЖИМ УСТАНОВКИ ВРЕМЕНИ **********
-  if (mode == MODE_SET_TIME)
-  {
-    if (timeoutTimer.isReady())
-    {
-      mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
-    }
+    case MODE_SET_TIME:
+      // *********** РЕЖИМ УСТАНОВКИ ВРЕМЕНИ **********
 
-    if (!needSaveDateTime)
-    {
-      needSaveDateTime = true;   // флаг на изменение времени
-    }
-
-    if (enc.isRight())
-    {
-      mins++;
-      if (mins > 59)
+      if (timeoutTimer.isReady())
       {
-        mins = 0;
+        mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
+      }
+
+      if (!needSaveDateTime)
+      {
+        needSaveDateTime = true;   // флаг на изменение времени
+      }
+
+      if (enc.isRight())
+      {
+        mins++;
+        if (mins > 59)
+        {
+          mins = 0;
+          hrs++;
+          if (hrs > 23)
+          {
+            hrs = 0;
+          }
+        }
+      }
+
+      if (enc.isLeft())
+      {
+        mins--;
+        if (mins < 0)
+        {
+          mins = 59;
+          hrs--;
+          if (hrs < 0)
+          {
+            hrs = 23;
+          }
+        }
+      }
+
+      if (enc.isRightH())
+      {
         hrs++;
         if (hrs > 23)
         {
           hrs = 0;
         }
       }
-    }
 
-    if (enc.isLeft())
-    {
-      mins--;
-      if (mins < 0)
+      if (enc.isLeftH())
       {
-        mins = 59;
         hrs--;
         if (hrs < 0)
         {
           hrs = 23;
         }
       }
-    }
 
-    if (enc.isRightH())
-    {
-      hrs++;
-      if (hrs > 23)
-      {
-        hrs = 0;
-      }
-    }
-
-    if (enc.isLeftH())
-    {
-      hrs--;
-      if (hrs < 0)
-      {
-        hrs = 23;
-      }
-    }
-
-    if (enc.isTurn() && !blinkFlag)
-    { // вывести свежие изменения при повороте
-      disp.displayClock(hrs, mins);
-      timeoutTimer.reset();           // сбросить таймаут
-    }
-
-    if (blinkTimer.isReady())
-    {
-      // прикол с перенастройкой таймера, чтобы цифры дольше горели
-      disp.point(1);
-      if (blinkFlag)
-      {
-        blinkFlag = false;
-        blinkTimer.setInterval(700);
+      if (enc.isTurn() && !blinkFlag)
+      { // вывести свежие изменения при повороте
         disp.displayClock(hrs, mins);
+        timeoutTimer.reset();           // сбросить таймаут
       }
-      else
+
+      if (blinkTimer.isReady())
       {
-        blinkFlag = true;
-        blinkTimer.setInterval(300);
-        disp.clear();
+        // прикол с перенастройкой таймера, чтобы цифры дольше горели
+        disp.point(1);
+        if (blinkFlag)
+        {
+          blinkFlag = false;
+          blinkTimer.setInterval(700);
+          disp.displayClock(hrs, mins);
+        }
+        else
+        {
+          blinkFlag = true;
+          blinkTimer.setInterval(300);
+          disp.clear();
+        }
       }
-    }
-  }
 
-  // *********** РЕЖИМ УСТАНОВКИ ДАТЫ **********
-  if (mode == MODE_SET_DATE)
-  {
-    if (timeoutTimer.isReady())
-    {
-      mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
-    }
+      break;
 
-    if (!needSaveDateTime)
-    {
-      needSaveDateTime = true;   // флаг на изменение времени
-    }
+    case MODE_SET_DATE:
+      // *********** РЕЖИМ УСТАНОВКИ ДАТЫ **********
 
-    if (enc.isRight())
-    {
-      day++;
-      if (day > daysInMonth[month - 1])
+      if (timeoutTimer.isReady())
       {
-        day = 1;
+        mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
       }
-    }
 
-    if (enc.isLeft())
-    {
-      day--;
-      if (day < 0)
+      if (!needSaveDateTime)
       {
-        day = daysInMonth[month - 1];
+        needSaveDateTime = true;   // флаг на изменение времени
       }
-    }
 
-    if (enc.isRightH())
-    {
-      month++;
-      if (month > 12)
+      if (enc.isRight())
       {
-        month = 1;
+        day++;
+        if (day > daysInMonth[month - 1])
+        {
+          day = 1;
+        }
       }
-    }
 
-    if (enc.isLeftH())
-    {
-      month--;
-      if (month < 0)
+      if (enc.isLeft())
       {
-        month = 12;
+        day--;
+        if (day < 0)
+        {
+          day = daysInMonth[month - 1];
+        }
       }
-    }
 
-    if (enc.isTurn() && !blinkFlag)
-    {
-      // вывести свежие изменения при повороте
-      disp.displayClock(month, day);
-      timeoutTimer.reset();           // сбросить таймаут
-    }
-
-    if (blinkTimer.isReady())
-    {
-      // прикол с перенастройкой таймера, чтобы цифры дольше горели
-      disp.point(1);
-      disp.point(0);
-
-      if (blinkFlag)
+      if (enc.isRightH())
       {
-        blinkFlag = false;
-        blinkTimer.setInterval(700);
+        month++;
+        if (month > 12)
+        {
+          month = 1;
+        }
+      }
+
+      if (enc.isLeftH())
+      {
+        month--;
+        if (month < 0)
+        {
+          month = 12;
+        }
+      }
+
+      if (enc.isTurn() && !blinkFlag)
+      {
+        // вывести свежие изменения при повороте
         disp.displayClock(month, day);
+        timeoutTimer.reset();           // сбросить таймаут
       }
-      else
+
+      if (blinkTimer.isReady())
       {
-        blinkFlag = true;
-        blinkTimer.setInterval(300);
+        disp.point(0);
+
+        if (blinkFlag)
+        {
+          blinkFlag = false;
+          blinkTimer.setInterval(700);
+          disp.displayClock(month, day);
+        }
+        else
+        {
+          blinkFlag = true;
+          blinkTimer.setInterval(300);
+        }
       }
-    }
-  }
 
-  // *********** РЕЖИМ УСТАНОВКИ ГОДА **********
-  if (mode == MODE_SET_YEAR)
-  {
-    if (timeoutTimer.isReady())
-    {
-      mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
-    }
+      break;
 
-    if (!needSaveDateTime)
-    {
-      needSaveDateTime = true;   // флаг на изменение времени
-    }
+    case MODE_SET_YEAR:
+      // *********** РЕЖИМ УСТАНОВКИ ГОДА **********
 
-    if (enc.isRight())
-    {
-      year++;
-      if (year > 99)
+      if (timeoutTimer.isReady())
       {
-        year = 1;
+        mode = MODE_DEFAULT;   // если сработал таймаут, вернёмся в режим 0
       }
-    }
 
-    if (enc.isLeft())
-    {
-      year--;
-      if (year < 0)
+      if (!needSaveDateTime)
       {
-        year = 99;
+        needSaveDateTime = true;   // флаг на изменение времени
       }
-    }
 
-    if (enc.isTurn() && !blinkFlag)
-    {
-      // вывести свежие изменения при повороте
-      disp.displayClock(20, year);
-      timeoutTimer.reset();           // сбросить таймаут
-    }
-
-    if (blinkTimer.isReady())
-    {
-      // прикол с перенастройкой таймера, чтобы цифры дольше горели
-      disp.point(1);
-      disp.point(0);
-
-      if (blinkFlag)
+      if (enc.isRight())
       {
-        blinkFlag = false;
-        blinkTimer.setInterval(700);
+        year++;
+        if (year > 99)
+        {
+          year = 1;
+        }
+      }
+
+      if (enc.isLeft())
+      {
+        year--;
+        if (year < 0)
+        {
+          year = 99;
+        }
+      }
+
+      if (enc.isTurn() && !blinkFlag)
+      {
+        // вывести свежие изменения при повороте
         disp.displayClock(20, year);
+        timeoutTimer.reset();           // сбросить таймаут
       }
-      else
+
+      if (blinkTimer.isReady())
       {
-        blinkFlag = true;
-        blinkTimer.setInterval(300);
+        disp.point(0);
+
+        if (blinkFlag)
+        {
+          blinkFlag = false;
+          blinkTimer.setInterval(700);
+          disp.displayClock(20, year);
+        }
+        else
+        {
+          blinkFlag = true;
+          blinkTimer.setInterval(300);
+        }
       }
-    }
+
+      break;
   }
 }
 
@@ -568,14 +572,7 @@ void encoderTick()
       EEPROM.update(1, alm_mins);
 
       // установка яркости от времени суток
-      if ((hrs >= NIGHT_START && hrs <= 23) || (hrs >= 0 && hrs <= NIGHT_END))
-      {
-        disp.brightness(MIN_BRIGHT);
-      }
-      else
-      {
-        disp.brightness(MAX_BRIGHT);
-      }
+      checkDisplayBrightness();
 
       disp.displayClock(hrs, mins);
     }
@@ -594,6 +591,7 @@ void encoderTick()
       alarm = false;          // и будильник
       duty = 0;
       digitalWrite(DIM_PIN, 0);
+
       if (BUZZ)
       {
         noTone(BUZZ_PIN);
@@ -602,7 +600,7 @@ void encoderTick()
       return;
     }
 
-    if (mode == MODE_DEFAULT && !dawn_start)
+    if (mode == MODE_DEFAULT)
     {
       // кнопка удержана в режиме часов и сейчас не рассвет
       disp.point(0);              // гасим кнопку
@@ -622,32 +620,15 @@ void encoderTick()
       delay(1000);
       disp.displayClockScroll(hrs, mins, 70);
     }
-    else if (mode == MODE_SET_ALARM)
+    else
     {
-      // кнопка удержана в режиме настройки будильника
-      mode = MODE_SET_TIME;               // сменить режим
-    }
-    else if (mode == MODE_SET_TIME)
-    {
-      mode = MODE_SET_DATE;
-    }
-    else if (mode == MODE_SET_DATE)
-    {
-      mode = MODE_SET_YEAR;
-    }
-    else if (mode >= MODE_SET_YEAR)
-    {
+      // кнопка зажата в любом режиме настройки
+      // переходим в режим часов
+
       mode = MODE_DEFAULT;
 
       // установка яркости от времени суток
-      if ((hrs >= NIGHT_START && hrs <= 23) || (hrs >= 0 && hrs <= NIGHT_END))
-      {
-        disp.brightness(MIN_BRIGHT);
-      }
-      else
-      {
-        disp.brightness(MAX_BRIGHT);
-      }
+      checkDisplayBrightness();
 
       disp.displayClock(hrs, mins);
     }
@@ -658,7 +639,7 @@ void encoderTick()
 
 void alarmTick()
 {
-  if (dawn_start && alarmFlag && dutyTimer.isReady())
+  if (dawn_start && dutyTimer.isReady())
   {
     // поднимаем яркость по таймеру
     duty++;
@@ -814,15 +795,18 @@ void clockTick()
 
 boolean isAlarmDay()
 {
-  if (DAY_CONDITION == 0)
-  {
-    return true;
-  }
+#if (DAY_CONDITION == 0)
+  return true;
+#else
 
   if (dayOfWeek == 0 || dayOfWeek == 6)  // воскресенье или субота
   {
     return false;
   }
+  else
+  {
+    return true;
+  }
 
-  return true;
+#endif
 }
