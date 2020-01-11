@@ -33,21 +33,38 @@
 ## Материалы и компоненты
 ### Ссылки оставлены на магазины, с которых я закупаюсь уже не один год
 Источники света лучше брать "тёплые", т.к. рассвет именно жёлтый!
-- Arduino NANO http://ali.pub/2x7vi8  http://ali.pub/2x7vim  http://ali.pub/2x7vj0
-- БП 5 Вольт http://ali.pub/2x7vog  http://ali.pub/2x7vp1
-- БП 12 Вольт http://ali.pub/2x7vp8  
-- RTC DS3231 http://ali.pub/2x7vky  http://ali.pub/2x7vl5
-- Дисплей http://ali.pub/2x7vmi  http://ali.pub/2x7vn3
-- Энкодер http://ali.pub/2x7vtb  http://ali.pub/2x7vu3
-- MOSFET модуль http://ali.pub/2x7vuv  http://ali.pub/2x7vv9
-- Диммер модуль http://ali.pub/2x7vvu
-- Лента светодиодная http://ali.pub/2x7vxs  http://ali.pub/2x7vy6
-- Матрица 220V http://ali.pub/2x7vyy  http://ali.pub/2x7vzc  http://ali.pub/2x7vzq
-- Резисторы и светодиоды можно найти в ЛЮБОМ магазине радиодеталей или радиорынке. Хотите китайский опт? Держите!
-- Светодиоды http://ali.pub/2x7w31
-- Резисторы 220 Ом (220 R) http://ali.pub/2x7w4e
-- Резисторы 100 Ом (100 R) http://ali.pub/2x7w4e
-- Пищалка http://ali.pub/2x7w65  http://ali.pub/2x7w6j
+* Arduino NANO 328p – искать
+* https://ali.ski/tI7blh
+* https://ali.ski/O4yTxb
+* https://ali.ski/6_rFIS
+* https://ali.ski/gb92E-
+* Giant4 (Россия)
+* БП 5V Али искать
+* https://ali.ski/DItEG
+* https://ali.ski/t3YFfU
+* БП 12 Вольт https://ali.ski/WOWezD
+* RTC DS3231
+* https://ali.ski/lqQM2d
+* https://ali.ski/u6mZas
+* Дисплей – искать
+* https://ali.ski/8pQi9M
+* https://ali.ski/-nBZs
+* https://ali.ski/wumit
+* Энкодер – искать
+* https://ali.ski/c-hjE
+* https://ali.ski/OygY3d
+* https://ali.ski/II_efl
+* MOSFET модуль – искать
+* https://ali.ski/SMPgB
+* Диммер модуль https://ali.ski/mjLKl
+* Лента светодиодная https://ali.ski/Vtkc_F
+* Матрица 220V https://ali.ski/zoe1HT
+* Резисторы и светодиоды можно найти в ЛЮБОМ магазине радиодеталей или радиорынке. Хотите китайский опт? Держите!
+* Светодиоды https://ali.ski/tAUCB
+* Резисторы 220 Ом (220 R) https://ali.ski/TAN2C
+* Резисторы 100 Ом (100 R)https://ali.ski/TAN2C
+* Пищалка https://ali.ski/oL5Ugs
+* Провода https://ali.ski/rto9T5
 
 ## Вам скорее всего пригодится
 * [Всё для пайки (паяльники и примочки)](http://alexgyver.ru/all-for-soldering/)
