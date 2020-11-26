@@ -196,7 +196,7 @@ void checkDisplayBrightness()
 void calculateDawn()
 {
   // расчёт времени рассвета
-  if (alm_mins > DAWN_TIME)
+  if (alm_mins >= DAWN_TIME)
   { // если минут во времени будильника больше продолжительности рассвета
     dwn_hrs = alm_hrs;                // час рассвета равен часу будильника
     dwn_mins = alm_mins - DAWN_TIME;  // минуты рассвета = минуты будильника - продолж. рассвета
@@ -626,6 +626,10 @@ void encoderTick()
       // переходим в режим часов
 
       mode = MODE_DEFAULT;
+
+      calculateDawn();        // расчёт времени рассвета
+      EEPROM.update(0, alm_hrs);
+      EEPROM.update(1, alm_mins);
 
       // установка яркости от времени суток
       checkDisplayBrightness();
