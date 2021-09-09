@@ -34,37 +34,37 @@
 ### Ссылки оставлены на магазины, с которых я закупаюсь уже не один год
 Источники света лучше брать "тёплые", т.к. рассвет именно жёлтый!
 * Arduino NANO 328p – искать
-* https://ali.ski/tI7blh
-* https://ali.ski/O4yTxb
-* https://ali.ski/6_rFIS
-* https://ali.ski/gb92E-
+* https://ali.ski/9v8dt
+* https://ali.ski/YaTmE
+* https://ali.ski/dZCnL
+* https://ali.ski/79Bm2g
 * Giant4 (Россия)
 * БП 5V Али искать
-* https://ali.ski/DItEG
-* https://ali.ski/t3YFfU
-* БП 12 Вольт https://ali.ski/WOWezD
+* https://ali.ski/2MSLYP
+* https://ali.ski/Y1_Ch
+* БП 12 Вольт https://ali.ski/Up6iC
 * RTC DS3231
-* https://ali.ski/lqQM2d
-* https://ali.ski/u6mZas
+* https://ali.ski/eZenW
+* https://ali.ski/QnQdrQ
 * Дисплей – искать
-* https://ali.ski/8pQi9M
-* https://ali.ski/-nBZs
-* https://ali.ski/wumit
+* https://ali.ski/XETSn
+* https://ali.ski/PyViGE
+* https://ali.ski/c90Ak
 * Энкодер – искать
-* https://ali.ski/c-hjE
-* https://ali.ski/OygY3d
-* https://ali.ski/II_efl
+* https://ali.ski/ergJR
+* https://ali.ski/ASSC--
+* https://ali.ski/0mE9W
 * MOSFET модуль – искать
-* https://ali.ski/SMPgB
-* Диммер модуль https://ali.ski/mjLKl
-* Лента светодиодная https://ali.ski/Vtkc_F
-* Матрица 220V https://ali.ski/zoe1HT
+* https://ali.ski/H_O5d
+* Диммер модуль https://ali.ski/lFtGbT
+* Лента светодиодная https://ali.ski/Hdhbc
+* Матрица 220V https://ali.ski/MZaWqS
 * Резисторы и светодиоды можно найти в ЛЮБОМ магазине радиодеталей или радиорынке. Хотите китайский опт? Держите!
-* Светодиоды https://ali.ski/tAUCB
-* Резисторы 220 Ом (220 R) https://ali.ski/TAN2C
-* Резисторы 100 Ом (100 R)https://ali.ski/TAN2C
-* Пищалка https://ali.ski/oL5Ugs
-* Провода https://ali.ski/rto9T5
+* Светодиоды https://ali.ski/Zje-70
+* Резисторы 220 Ом (220 R) https://ali.ski/6es0o
+* Резисторы 100 Ом (100 R)https://ali.ski/6es0o
+* Пищалка https://ali.ski/cJsQo
+* Провода https://ali.ski/nvqqMJ
 
 ## Вам скорее всего пригодится
 * [Всё для пайки (паяльники и примочки)](http://alexgyver.ru/all-for-soldering/)
