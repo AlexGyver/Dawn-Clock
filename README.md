@@ -30,42 +30,6 @@
 ![SCHEME](https://github.com/AlexGyver/dawn-clock/blob/master/schemes/scheme2.jpg)
 
 <a id="chapter-3"></a>
-## Материалы и компоненты
-### Ссылки оставлены на магазины, с которых я закупаюсь уже не один год
-Источники света лучше брать "тёплые", т.к. рассвет именно жёлтый!
-* Arduino NANO 328p – искать
-* https://ali.ski/tI7blh
-* https://ali.ski/O4yTxb
-* https://ali.ski/6_rFIS
-* https://ali.ski/gb92E-
-* Giant4 (Россия)
-* БП 5V Али искать
-* https://ali.ski/DItEG
-* https://ali.ski/t3YFfU
-* БП 12 Вольт https://ali.ski/WOWezD
-* RTC DS3231
-* https://ali.ski/lqQM2d
-* https://ali.ski/u6mZas
-* Дисплей – искать
-* https://ali.ski/8pQi9M
-* https://ali.ski/-nBZs
-* https://ali.ski/wumit
-* Энкодер – искать
-* https://ali.ski/c-hjE
-* https://ali.ski/OygY3d
-* https://ali.ski/II_efl
-* MOSFET модуль – искать
-* https://ali.ski/SMPgB
-* Диммер модуль https://ali.ski/mjLKl
-* Лента светодиодная https://ali.ski/Vtkc_F
-* Матрица 220V https://ali.ski/zoe1HT
-* Резисторы и светодиоды можно найти в ЛЮБОМ магазине радиодеталей или радиорынке. Хотите китайский опт? Держите!
-* Светодиоды https://ali.ski/tAUCB
-* Резисторы 220 Ом (220 R) https://ali.ski/TAN2C
-* Резисторы 100 Ом (100 R)https://ali.ski/TAN2C
-* Пищалка https://ali.ski/oL5Ugs
-* Провода https://ali.ski/rto9T5
-
 ## Вам скорее всего пригодится
 * [Всё для пайки (паяльники и примочки)](http://alexgyver.ru/all-for-soldering/)
 * [Недорогие инструменты](http://alexgyver.ru/my_instruments/)
