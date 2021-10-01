@@ -34,6 +34,13 @@
    Установка года: цифры горят, первые цифры 20, двоеточия нет
 */
 
+// константы
+
+#define DAWN_TYPE_AC 0
+#define DAWN_TYPE_DC 1
+#define DAY_CONDITION_EVERY_DAY 0
+#define DAY_CONDITION_WEEK_DAYS 1
+
 // *************************** НАСТРОЙКИ ***************************
 #define DAWN_TIME 30      // продолжительность рассвета (в минутах)
 #define ALARM_TIMEOUT 70  // таймаут на автоотключение будильника, секунды
@@ -42,9 +49,9 @@
 #define BUZZ 0            // пищать пищалкой (1 вкл, 0 выкл)
 #define BUZZ_FREQ 800     // частота писка (Гц)
 
-#define DAWN_TYPE 0       // 1 - мосфет (DC диммер), 0 - симистор (AC диммер) СМОТРИ СХЕМЫ
-#define DAWN_MIN 20       // начальная яркость лампы (0 - 255) (для сетевых матриц начало света примерно с 50)
-#define DAWN_MAX 255      // максимальная яркость лампы (0 - 255)
+#define DAWN_TYPE DAWN_TYPE_AC       // 1 - мосфет (DC диммер), 0 - симистор (AC диммер) СМОТРИ СХЕМЫ
+#define DAWN_MIN 20                  // начальная яркость лампы (0 - 255) (для сетевых матриц начало света примерно с 50)
+#define DAWN_MAX 255                 // максимальная яркость лампы (0 - 255)
 
 #define MAX_BRIGHT 7      // яркость дисплея дневная (0 - 7)
 #define MIN_BRIGHT 1      // яркость дисплея ночная (0 - 7)
@@ -54,7 +61,7 @@
 
 #define ENCODER_TYPE 1    // тип энкодера (0 или 1). Типы энкодеров расписаны на странице проекта
 
-#define DAY_CONDITION 1   // 0 - срабатывать каждый день, 1 - по будням
+#define DAY_CONDITION DAY_CONDITION_WEEK_DAYS   // 0 - срабатывать каждый день, 1 - по будням
 
 // ************ ПИНЫ ************
 #define CLKe 8        // энкодер
@@ -115,7 +122,7 @@ void setup()
   pinMode(DIM_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
 
-#if (DAWN_TYPE == 0)
+#if (DAWN_TYPE == DAWN_TYPE_AC)
   pinMode(ZERO_PIN, INPUT);
   attachInterrupt(0, detect_up, FALLING);
   StartTimer1(timer_interrupt, 40);        // время для одного разряда ШИМ
@@ -215,15 +222,15 @@ void calculateDawn()
 
 void dutyTick()
 {
-#if (DAWN_TYPE == 1)      // если мосфет
+#if (DAWN_TYPE == DAWN_TYPE_DC)      // если мосфет
   if (dawn_start || alarm)      // если рассвет или уже будильник
   {
     analogWrite(DIM_PIN, duty);   // жарим ШИМ
   }
-#endif // если DAWN_TYPE == 0 то код не скомпилируется и функция dutyTick будет пуста
+#endif // если DAWN_TYPE == DAWN_TYPE_AC то код не скомпилируется и функция dutyTick будет пуста
 }
 
-#if (DAWN_TYPE == 0)  // если диммер
+#if (DAWN_TYPE == DAWN_TYPE_AC)  // если диммер
 //----------------------ОБРАБОТЧИКИ ПРЕРЫВАНИЙ--------------------------
 void timer_interrupt() {          // прерывания таймера срабатывают каждые 40 мкс
   if (duty > 0) {
@@ -799,7 +806,7 @@ void clockTick()
 
 boolean isAlarmDay()
 {
-#if (DAY_CONDITION == 0)
+#if (DAY_CONDITION == DAY_CONDITION_EVERY_DAY)
   return true;
 #else
 

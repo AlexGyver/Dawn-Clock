@@ -5,9 +5,14 @@
   Пины такие же как и в основном скетче
 */
 
+// константы
+
+#define DAWN_TYPE_AC 0
+#define DAWN_TYPE_DC 1
+
 // *************************** НАСТРОЙКИ ***************************
-#define DAWN_TYPE 0       // 1 - мосфет (DC диммер), 0 - симистор (AC диммер) СМОТРИ СХЕМЫ
-#define ENCODER_TYPE 1    // тип энкодера (0 или 1). Типы энкодеров расписаны на странице проекта
+#define DAWN_TYPE DAWN_TYPE_AC       // 1 - мосфет (DC диммер), 0 - симистор (AC диммер) СМОТРИ СХЕМЫ
+#define ENCODER_TYPE 1              // тип энкодера (0 или 1). Типы энкодеров расписаны на странице проекта
 
 // ************ ПИНЫ ************
 #define CLKe 8        // энкодер
@@ -45,7 +50,7 @@ void setup()
   pinMode(DIM_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
 
-#if (DAWN_TYPE == 0)
+#if (DAWN_TYPE == DAWN_TYPE_AC)
   pinMode(ZERO_PIN, INPUT);
   attachInterrupt(0, detect_up, FALLING);
   StartTimer1(timer_interrupt, 40);        // время для одного разряда ШИМ
@@ -80,13 +85,13 @@ void loop()
     disp.displayInt(duty);    
   }
 
-#if (DAWN_TYPE == 0)
+#if (DAWN_TYPE == DAWN_TYPE_DC)
   analogWrite(DIM_PIN, duty);
 #endif
 }
 
 
-#if (DAWN_TYPE == 0)  // если диммер
+#if (DAWN_TYPE == DAWN_TYPE_AC)  // если диммер
 //----------------------ОБРАБОТЧИКИ ПРЕРЫВАНИЙ--------------------------
 void timer_interrupt() {          // прерывания таймера срабатывают каждые 40 мкс
   if (duty > 0) {
